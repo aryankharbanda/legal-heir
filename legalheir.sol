@@ -68,22 +68,12 @@ contract LegalHeir{
     }
 
     // STEP 3 : APPLY LEGAL HEIR
-    // !! can remove heir struct also
-    struct Heir { 
-        string deceasedAID;
-        string heirAID;
-        address heirAddress;
-    }
-    Heir[] heirApplications;
-    mapping(string => uint) heirID;
-
     function applyHeir(string memory _decAID, string memory _heirAID) public {
         
         // check if death certificate exists
         require(certificateID[_decAID] != 0, "no death certificate");
 
         // check if no one has applied before
-        require(heirID[_decAID] == 0, "legal heir already assigned");
         require(certificates[certificateID[_decAID]-1].hasLegalHeir != true, "legal heir already assigned");
 
         // check if applying person is in the list
@@ -94,9 +84,6 @@ contract LegalHeir{
             }
         }
         require(isValidHeir == true, "applicant is not eligible for legal heir");
-
-        heirApplications.push(Heir(_decAID, _heirAID, msg.sender));
-        heirID[_decAID] = heirApplications.length; 
 
         // update legalHeir in deathCertificate
         certificates[certificateID[_decAID]-1].hasLegalHeir = true;
@@ -119,6 +106,5 @@ contract LegalHeir{
     function viewHeir(string memory _decAID) public view returns (bool hasHeir, string memory heirAID){
         return(certificates[certificateID[_decAID]-1].hasLegalHeir, certificates[certificateID[_decAID]-1].heirAID);
     }
-
 
 }
